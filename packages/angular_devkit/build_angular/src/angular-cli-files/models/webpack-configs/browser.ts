@@ -9,26 +9,27 @@
 // TODO: cleanup this file, it's copied as is from Angular CLI.
 
 import * as path from 'path';
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SubresourceIntegrityPlugin = require('webpack-subresource-integrity');
-import { LicenseWebpackPlugin } from 'license-webpack-plugin';
-import { generateEntryPoints, packageChunkSort } from '../../utilities/package-chunk-sort';
-import { BaseHrefWebpackPlugin } from '../../lib/base-href-webpack';
-import { IndexHtmlWebpackPlugin } from '../../plugins/index-html-webpack-plugin';
-import { ExtraEntryPoint } from '../../../browser/schema';
-import { BrowserBuilderSchema } from '../../../browser/schema';
-import { WebpackConfigOptions } from '../build-options';
-import { normalizeExtraEntryPoints } from './utils';
+import {LicenseWebpackPlugin} from 'license-webpack-plugin';
+import {generateEntryPoints, packageChunkSort} from '../../utilities/package-chunk-sort';
+import {BaseHrefWebpackPlugin} from '../../lib/base-href-webpack';
+import {IndexHtmlWebpackPlugin} from '../../plugins/index-html-webpack-plugin';
+import {ExtraEntryPoint} from '../../../browser/schema';
+import {BrowserBuilderSchema} from '../../../browser/schema';
+import {WebpackConfigOptions} from '../build-options';
+import {normalizeExtraEntryPoints} from './utils';
 
 /**
-+ * license-webpack-plugin has a peer dependency on webpack-sources, list it in a comment to
-+ * let the dependency validator know it is used.
-+ *
-+ * require('webpack-sources')
-+ */
+ + * license-webpack-plugin has a peer dependency on webpack-sources, list it in a comment to
+ + * let the dependency validator know it is used.
+ + *
+ + * require('webpack-sources')
+ + */
 
 export function getBrowserConfig(wco: WebpackConfigOptions) {
-  const { root, projectRoot, buildOptions } = wco;
+  const {root, projectRoot, buildOptions} = wco;
 
 
   let extraPlugins: any[] = [];
@@ -125,7 +126,7 @@ export function getBrowserConfig(wco: WebpackConfigOptions) {
             test: (module: any, chunks: Array<{ name: string }>) => {
               const moduleName = module.nameForCondition ? module.nameForCondition() : '';
               return /[\\/]node_modules[\\/]/.test(moduleName)
-                && !chunks.some(({ name }) => name === 'polyfills'
+                && !chunks.some(({name}) => name === 'polyfills'
                   || globalStylesBundleNames.includes(name));
             },
           },
@@ -142,6 +143,16 @@ export function getBrowserConfig(wco: WebpackConfigOptions) {
         sri: buildOptions.subresourceIntegrity,
       }),
     ]),
-    node: false,
+    node: {
+      fs: 'empty',
+      global: true,
+      crypto: 'empty',
+      tls: 'empty',
+      net: 'empty',
+      process: true,
+      module: false,
+      clearImmediate: false,
+      setImmediate: false
+    }
   };
 }
